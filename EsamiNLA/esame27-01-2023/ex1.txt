@@ -1,0 +1,84 @@
+//Solving A1 y = b con b = (1,...,1)'
+mpirun -n 4 ./test1 A_1.mtx 1 y_sol.mtx  hist.txt -i bicg -tol 1.0e-10
+
+initial vector x      : all components set to 0
+precision             : double
+linear solver         : BiCG
+preconditioner        : none
+convergence condition : ||b-Ax||_2 <= 1.0e-10 * ||b-Ax_0||_2
+
+
+BiCG: number of iterations = 143
+
+BiCG: relative residual    = 9.906489e-11
+
+
+//Solving A2 x = y_sol
+root@0bc56b79e068 test # mpirun -n 4 ./test1 A_2.mtx  y_sol.mtx sol.txt  hist.txt -i bicg -tol 1.0e-10
+
+initial vector x      : all components set to 0
+precision             : double
+linear solver         : BiCG
+preconditioner        : none
+convergence condition : ||b-Ax||_2 <= 1.0e-10 * ||b-Ax_0||_2
+
+
+BiCG: number of iterations = 39
+
+BiCG: relative residual    = 5.012392e-11
+
+
+//preconditioner with ILU
+//Sys 1
+ mpirun -n 4 ./test1 A_1.mtx 1 y_sol.mtx  hist.txt -i bicg -tol 1.0e-10 -p ilu
+
+number of processes = 4
+matrix size = 420 x 420 (7902 nonzero entries)
+
+initial vector x      : all components set to 0
+precision             : double
+linear solver         : BiCG
+preconditioner        : ILU(0)
+convergence condition : ||b-Ax||_2 <= 1.0e-10 * ||b-Ax_0||_2
+
+
+BiCG: number of iterations = 62
+
+BiCG: relative residual    = 1.945094e-11
+
+//Sys 2
+# mpirun -n 4 ./test1 A_2.mtx  y_sol.mtx sol.txt  hist.txt -i bicg -tol 1.0e-10 -p ilu
+
+linear solver         : BiCG
+preconditioner        : ILU(0)
+convergence condition : ||b-Ax||_2 <= 1.0e-10 * ||b-Ax_0||_2
+
+
+BiCG: number of iterations = 16
+
+BiCG: relative residual    = 1.408972e-11
+
+// Addtive Schwartz method +(ILU to solve innear lin sys of the subdomains)
+//Sys 1
+# mpirun -n 4 ./test1 A_1.mtx 1 y_sol.mtx  hist.txt -i bicg -tol 1.0e-10 -adds true  -p ilu 
+
+linear solver         : BiCG
+preconditioner        : ILU(0) + Additive Schwarz
+convergence condition : ||b-Ax||_2 <= 1.0e-10 * ||b-Ax_0||_2
+
+
+BiCG: number of iterations = 34
+BiCG: relative residual    = 6.599797e-11
+
+//Sys 2
+ mpirun -n 4 ./test1 A_2.mtx  y_sol.mtx sol.txt  hist.txt -i bicg -tol 1.0e-10 -adds true  -p ilu
+
+linear solver         : BiCG
+preconditioner        : ILU(0) + Additive Schwarz
+convergence condition : ||b-Ax||_2 <= 1.0e-10 * ||b-Ax_0||_2
+
+
+BiCG: number of iterations = 8
+BiCG: relative residual    = 6.443936e-11
+
+
